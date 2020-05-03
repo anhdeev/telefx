@@ -4,6 +4,7 @@ from flask import Flask, request, render_template
 import json
 import logging
 import subprocess
+import queue
 
 #sys.path.append(os.path.abspath(os.path.join('..')))
 
@@ -17,9 +18,14 @@ class TelegramWebhookBot(object):
         self.key = MY_TELEGRAM_KEY
         self.bot = telegram.Bot(token=self.key)
         self.https_app = Flask(__name__, template_folder='../templates')
+        self.cmd_queue = queue.Queue(maxsize=20)
 
-        @self.https_app.route("/screenshot", methods=['POST'])
-        def screenshot():
+        @self.https_app.route("/getcmd", methods=['GET'])
+        def get_cmd():
+            return self.cmd_queue.get()
+
+        @self.https_app.route("/sendcmd", methods=['POST'])
+        def send_cmd():
             return "Hello World!"
 
         @self.https_app.route('/')
@@ -38,7 +44,8 @@ class TelegramWebhookBot(object):
                 chat_id, result = messager.execute_command()
 
             if chat_id:
-                self.bot.sendMessage(chat_id=chat_id, text=str(result))
+                #self.bot.sendMessage(chat_id=chat_id, text=str(result))
+                self.cmd_queue.push(str(result) + "@" + chat_id)
             else:
                 pass
 
