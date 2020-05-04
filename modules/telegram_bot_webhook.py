@@ -11,7 +11,7 @@ import queue
 from modules.messager import Messager
 
 #TODO Store key in database
-MY_TELEGRAM_KEY="1102340901:AAGV-PBEyXwfLeAgDkkJvQpI6mD4OGWStXM"
+MY_TELEGRAM_KEY="1102340901:AAFwABs_KFtsth_BVRjOXjEMWxQMOawpFQc"
 
 class TelegramWebhookBot(object):
     def __init__(self):
@@ -19,16 +19,6 @@ class TelegramWebhookBot(object):
         self.bot = telegram.Bot(token=self.key)
         self.https_app = Flask(__name__, template_folder='../templates')
         self.cmd_queue = queue.Queue(maxsize=20)
-
-        @self.https_app.route("/getcmd", methods=['GET'])
-        def get_cmd():
-            return self.cmd_queue.get()
-
-        @self.https_app.route("/sendcmd", methods=['POST'])
-        def send_cmd():
-            cmd = request.get_data()
-            self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
-            return "ok"
 
         @self.https_app.route('/')
         def index(): #TODO fix issue of register by template
@@ -47,11 +37,30 @@ class TelegramWebhookBot(object):
 
             if chat_id:
                 #self.bot.sendMessage(chat_id=chat_id, text=str(result))
-                self.cmd_queue.push(str(result) + "@" + chat_id)
+                self.cmd_queue.put(str(result) + "@" + str(chat_id))
             else:
                 pass
 
             return 'ok'
+
+        @self.https_app.route("/getcmd", methods=['GET'])
+        def get_cmd(self=self):
+            cmd = None
+            try:
+                if self.cmd_queue.empty():
+                    cmd = 'none'
+                else:
+                    cmd = self.cmd_queue.get(False)
+            except:
+                cmd = "n/a"
+
+            return cmd
+
+        @self.https_app.route("/sendcmd", methods=['POST'])
+        def send_cmd(self=self):
+            cmd = request.get_data()
+            self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
+            return "ok"
 
     def parse_message(self):
         # extract and filter information 
