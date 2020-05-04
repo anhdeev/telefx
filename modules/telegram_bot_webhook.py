@@ -26,7 +26,9 @@ class TelegramWebhookBot(object):
 
         @self.https_app.route("/sendcmd", methods=['POST'])
         def send_cmd():
-            return "Hello World!"
+            cmd = request.get_data()
+            self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
+            return "ok"
 
         @self.https_app.route('/')
         def index(): #TODO fix issue of register by template
@@ -60,5 +62,5 @@ class TelegramWebhookBot(object):
 
     def run(self):
         logging.info("Please access https:<domain>/ to register webhook portal for udpates!")
-        self.https_app.run(host='10.148.0.7', port='443', ssl_context=('ssl/public.pem', 'ssl/private.key'))
+        self.https_app.run(host='0.0.0.0', port='443', ssl_context=('ssl/public.pem', 'ssl/private.key'))
         #self.https_app.run(host='10.148.0.7', port='80')
