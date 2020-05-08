@@ -3,6 +3,8 @@ import os
 import json
 import logging
 
+from modules.common import enTeleCmd
+
 MY_USER_NAME="Duong Anh"
 MY_USER_ID="378106375"
 MY_CHAT_ID="378106375"
@@ -61,3 +63,14 @@ class Messager(object):
             return (MY_CHAT_ID, "Anonymous user is not allowed!")
 
         return (None, None)
+
+    def parseCmd(self, request):
+        cmd = 0
+        msgs = request.split(' ')
+        cmdcode = {
+            "/buy" : E_TELECMD_BUY,
+            "/sell" : E_TELECMD_BUY,
+            "/screenshot" : E_TELECMD_CAPTURE,
+            "/discover" : E_TELECMD_GENERAL_DISCOVER
+        }
+
