@@ -33,13 +33,15 @@ class TelegramWebhookBot(object):
                 update = telegram.Update.de_json(request.get_json(force=True), self.bot)
 
                 messager = Messager(update)
-                chat_id, result = messager.execute_command()
+                chat_id, result = messager.parse_command()
 
-            if chat_id:
+            if chat_id and result:
                 #self.bot.sendMessage(chat_id=chat_id, text=str(result))
                 self.cmd_queue.put(str(result) + "@" + str(chat_id))
+            elif chat_id:
+                self.send_message(chat_id, "Parse command error.")
             else:
-                pass
+                logging.error("[Error] Request message wrong format")
 
             return 'ok'
 
@@ -52,19 +54,16 @@ class TelegramWebhookBot(object):
                 else:
                     cmd = self.cmd_queue.get(False)
             except:
-                cmd = "n/a"
+                cmd = "none"
 
             return cmd
 
         @self.https_app.route("/sendcmd", methods=['POST'])
         def send_cmd(self=self):
             cmd = request.get_data()
+            logging.info("[sendcmd] data: ", cmd)
             self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
             return "ok"
-
-    def parse_message(self):
-        # extract and filter information 
-        pass
 
     def send_message(self, chat_id, result):
         self.bot.sendMessage(chat_id=chat_id, text=result)

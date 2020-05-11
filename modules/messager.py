@@ -42,18 +42,18 @@ class Messager(object):
         else:
             logging.warn("The message is not in type of 'message' neither 'channel_post'")
 
-    def execute_command(self):
+    def parse_command(self):
         if self.text == None or self.text == "" or self.text[:1] != '/':
             return (None, None)
 
         if self.from_user:
             if str(self.from_user['id']) != MY_USER_ID:
                 logging.debug("Send from anothers")
-                result = self.text
+                result = _encodeCmd(self.text)
                 return (self.chat_id, result)
             elif self.msg_type == "message" and self.text:
                 logging.debug("Send from me")
-                result = self.text
+                result = _encodeCmd(self.text, True)
                 return (self.chat_id, result)
             elif self.msg_type == "channel_post":
                 logging.debug("Execute channel_post type message")
@@ -64,13 +64,86 @@ class Messager(object):
 
         return (None, None)
 
-    def parseCmd(self, request):
-        cmd = 0
+    # Request format
+    # CMD[0:7] Command 
+    # CMD[8:15] Parameter 1
+    # CMD[16:23] Parameter 2
+    # CMD[24:31] Parameter 3
+    def _encodeCmd(self, request, me=False):
+        encodedCmd = 0
         msgs = request.split(' ')
-        cmdcode = {
-            "/buy" : E_TELECMD_BUY,
-            "/sell" : E_TELECMD_BUY,
-            "/screenshot" : E_TELECMD_CAPTURE,
-            "/discover" : E_TELECMD_GENERAL_DISCOVER
-        }
 
+        if len(msgs) == 0:
+            return None
+
+        BYTE0 = msgs[0]
+        del msgs[0]
+
+        if BYTE0 == "/buy" and me:
+            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedArgs = _encodeArgumentBuy(msgs)
+            if(encodedArgs):
+                encodedCmd += encodedArgs
+                return encodedCmd
+        elif BYTE0 == "/sell" and me:
+            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedArgs = _encodeArgumentSell(msgs)
+            if(encodedArgs):
+                encodedCmd += encodedArgs
+                return encodedCmd
+        elif BYTE0 == "/screenshot":
+            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedArgs = _encodeArgumentScreenshot(msgs)
+            if(encodedArgs):
+                encodedCmd += encodedArgs
+                return encodedCmd
+        elif BYTE0 == "/discover":
+            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedArgs = _encodeArgumentDiscover(msgs)
+            if(encodedArgs):
+                encodedCmd += encodedArgs
+                return encodedCmd
+        else:
+            return None
+
+        return None
+
+    # /buy EURUSD M5 2
+    def _encodeArgumentBuy(self, args):
+        encodedArgs = 0
+
+        try:
+            encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
+            encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            encodedArgs += (int(args[2]) << 24)
+            return encodedArgs
+        except:
+            print("[_encodeArgumentBuy] An exception occurred")
+            return None
+
+    def _encodeArgumentSell(self, args):
+        return _encodeArgumentBuy(self, args)
+
+    # /screenshot EURUSD M5
+    def _encodeArgumentScreenshot(self, args):
+        encodedArgs = 0
+
+        try:
+            encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
+            encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            return encodedArgs
+        except:
+            print("[_encodeArgumentScreenshot] An exception occurred")
+            return None
+
+    # /discover H1
+    def _encodeArgumentDiscover(self, args):
+        encodedArgs = 0
+
+        try:
+            encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
+            encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            return encodedArgs
+        except:
+            print("[_encodeArgumentScreenshot] An exception occurred")
+            return None
