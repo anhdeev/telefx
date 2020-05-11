@@ -27,22 +27,25 @@ class TelegramWebhookBot(object):
 
         @self.https_app.route('/webhook', methods=['POST'])
         def webhook_handler(self=self):
-            logging.info("Method: %s" % request.method)
-            if request.method == "POST":
-                # retrieve the message in JSON and then transform it to Telegram object
-                update = telegram.Update.de_json(request.get_json(force=True), self.bot)
+            try:
+                logging.info("Method: %s" % request.method)
+                if request.method == "POST":
+                    # retrieve the message in JSON and then transform it to Telegram object
+                    update = telegram.Update.de_json(request.get_json(force=True), self.bot)
 
-                messager = Messager(update)
-                chat_id, result = messager.parse_command()
+                    messager = Messager(update)
+                    chat_id, result = messager.parse_command()
 
-            if chat_id and result:
-                #self.bot.sendMessage(chat_id=chat_id, text=str(result))
-                self.cmd_queue.put(str(result) + "@" + str(chat_id))
-            elif chat_id:
-                self.send_message(chat_id, "Command is not recognized.")
-            else:
-                logging.error("[Error] Request message wrong format")
-
+                if chat_id and result:
+                    #self.bot.sendMessage(chat_id=chat_id, text=str(result))
+                    self.cmd_queue.put(str(result) + "@" + str(chat_id))
+                elif chat_id:
+                    self.send_message(chat_id, "Command is not recognized.")
+                else:
+                    logging.error("[Error] Request message wrong format")
+            except:
+                logging.error("[webhook_handler] Exception occurred!")
+                
             return 'ok'
 
         @self.https_app.route("/getcmd", methods=['GET'])
