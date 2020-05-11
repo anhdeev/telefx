@@ -43,9 +43,9 @@ class TelegramWebhookBot(object):
                     self.send_message(chat_id, "Command is not recognized.")
                 else:
                     logging.error("[Error] Request message wrong format")
-            except:
-                logging.error("[webhook_handler] Exception occurred!")
-                
+            except Exception as e: # work on python 3.x
+                logger.error('[Exception][webhook_handler]: '+ str(e))
+
             return 'ok'
 
         @self.https_app.route("/getcmd", methods=['GET'])
