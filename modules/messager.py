@@ -84,7 +84,7 @@ class Messager(object):
             encodedArgs = self._encodeArgumentBuy(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
-                logging.debug("[_encodeCmd] encodedCmd=0x%s", hex(encodedCmd))
+                logging.debug("[_encodeCmd] encodedCmd=%s", hex(encodedCmd))
                 return encodedCmd
         elif BYTE0 == "/sell" and me:
             encodedCmd += enTeleCmd.E_TELECMD_BUY.value
@@ -117,7 +117,7 @@ class Messager(object):
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
             encodedArgs += (int(args[2]) << 24)
-            logging.debug("[_encodeArgumentBuy] encodedArgs=0x%s", hex(encodedArgs))
+            logging.debug("[_encodeArgumentBuy] encodedArgs=%s", hex(encodedArgs))
             return encodedArgs
         except Exception as e: # work on python 3.x
             logging.error('[Exception][_encodeArgumentBuy]: '+ str(e))
@@ -134,7 +134,7 @@ class Messager(object):
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
-            logging.debug("[_encodeArgumentScreenshot] encodedArgs=0x%s", hex(encodedArgs))
+            logging.debug("[_encodeArgumentScreenshot] encodedArgs=%s", hex(encodedArgs))
             return encodedArgs
         except Exception as e: # work on python 3.x
             logging.error('[Exception][_encodeArgumentScreenshot]: '+ str(e))
@@ -147,7 +147,7 @@ class Messager(object):
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
-            logging.debug("[_encodeArgumentDiscover] encodedArgs=0x%s", hex(encodedArgs))
+            logging.debug("[_encodeArgumentDiscover] encodedArgs=%s", hex(encodedArgs))
             return encodedArgs
         except Exception as e: # work on python 3.x
             logging.error('[Exception][_encodeArgumentDiscover]: '+ str(e))
