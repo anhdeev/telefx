@@ -11,39 +11,39 @@ class enTeleCmd(Enum):
  
 
 class enTimeframe(Enum):
-    E_PERIOD_CURRENT
-    E_PERIOD_M1
-    E_PERIOD_M5
-    E_PERIOD_M15
-    E_PERIOD_M30
-    E_PERIOD_H1
-    E_PERIOD_H4
-    E_PERIOD_D1
-    E_PERIOD_W1
-    E_PERIOD_MN1
+    E_PERIOD_CURRENT = 0
+    E_PERIOD_M1 = 1
+    E_PERIOD_M5 = 2
+    E_PERIOD_M15 = 3
+    E_PERIOD_M30 = 4
+    E_PERIOD_H1 = 5
+    E_PERIOD_H4 = 6
+    E_PERIOD_D1 = 7
+    E_PERIOD_W1 = 8
+    E_PERIOD_MN1 = 9
 
 class enMarketPair(Enum):
-    E_PAIR_INITIAL
-    E_EURUSD
-    E_GBPUSD
-    E_USDJPY
-    E_USDCAD
-    E_USDCHF
-    E_NZDUSD
-    E_EURSGD
-    E_GBPJPY
-    E_EURCAD
-    E_EURJPY
-    E_GBPCHF
-    E_CADJPY
-    E_AUDCHF
-    E_NZDCHF
-    E_CADCHF
-    E_CHFJPY
-    E_EURCHF
-    E_EURGBP
-    E_GBPCAD
-    E_XAUUSD
-    E_WTIUSD
-    E_DXY
-    E_PAIR_MAX
+    E_PAIR_INITIAL = 0
+    E_EURUSD = 1
+    E_GBPUSD = 2
+    E_USDJPY = 3
+    E_USDCAD = 4
+    E_USDCHF = 5
+    E_NZDUSD = 6
+    E_EURSGD = 7
+    E_GBPJPY = 8
+    E_EURCAD = 9
+    E_EURJPY = 10
+    E_GBPCHF = 11
+    E_CADJPY = 12
+    E_AUDCHF = 13
+    E_NZDCHF = 14
+    E_CADCHF = 15
+    E_CHFJPY = 16
+    E_EURCHF = 17
+    E_EURGBP = 18
+    E_GBPCAD = 19
+    E_XAUUSD = 20
+    E_WTIUSD = 21
+    E_DXY = 22
+    E_PAIR_MAX = 9999
