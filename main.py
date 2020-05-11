@@ -5,7 +5,7 @@ import logging
 import threading
 from modules.telegram_bot_webhook import TelegramWebhookBot
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 bot = TelegramWebhookBot()
 
 def run_bot():

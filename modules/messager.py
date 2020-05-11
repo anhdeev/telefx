@@ -73,6 +73,8 @@ class Messager(object):
         encodedCmd = 0
         msgs = request.split(' ')
 
+        logging.debug(request)
+        logging.debug(str(msgs))
         if len(msgs) == 0:
             return None
 
