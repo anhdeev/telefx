@@ -44,7 +44,7 @@ class TelegramWebhookBot(object):
                 else:
                     logging.error("[Error] Request message wrong format")
             except Exception as e: # work on python 3.x
-                logger.error('[Exception][webhook_handler]: '+ str(e))
+                logging.error('[Exception][webhook_handler]: '+ str(e))
 
             return 'ok'
 
