@@ -39,7 +39,7 @@ class TelegramWebhookBot(object):
                 #self.bot.sendMessage(chat_id=chat_id, text=str(result))
                 self.cmd_queue.put(str(result) + "@" + str(chat_id))
             elif chat_id:
-                self.send_message(chat_id, "Parse command error.")
+                self.send_message(chat_id, "Command is not recognized.")
             else:
                 logging.error("[Error] Request message wrong format")
 

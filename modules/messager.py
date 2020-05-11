@@ -49,11 +49,11 @@ class Messager(object):
         if self.from_user:
             if str(self.from_user['id']) != MY_USER_ID:
                 logging.debug("Send from anothers")
-                result = _encodeCmd(self.text)
+                result = self._encodeCmd(self.text)
                 return (self.chat_id, result)
             elif self.msg_type == "message" and self.text:
                 logging.debug("Send from me")
-                result = _encodeCmd(self.text, True)
+                result = self._encodeCmd(self.text, True)
                 return (self.chat_id, result)
             elif self.msg_type == "channel_post":
                 logging.debug("Execute channel_post type message")
