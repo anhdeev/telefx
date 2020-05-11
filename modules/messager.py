@@ -3,7 +3,7 @@ import os
 import json
 import logging
 
-from modules.common import enTeleCmd
+from modules.common import *
 
 MY_USER_NAME="Duong Anh"
 MY_USER_ID="378106375"
