@@ -114,15 +114,14 @@ class Messager(object):
 
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
-            logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
-            logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             encodedArgs += (int(args[2]) << 24)
             logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             return encodedArgs
-        except:
-            logging.error("[_encodeArgumentBuy] An exception occurred")
+        except Exception as e: # work on python 3.x
+            logging.error('[Exception][_encodeArgumentBuy]: '+ str(e))
             return None
+
 
     def _encodeArgumentSell(self, args):
         return self._encodeArgumentBuy(self, args)
@@ -134,9 +133,10 @@ class Messager(object):
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            logging.debug("[_encodeArgumentScreenshot] encodedArgs=", encodedArgs)
             return encodedArgs
-        except:
-            logging.error("[_encodeArgumentScreenshot] An exception occurred")
+        except Exception as e: # work on python 3.x
+            logging.error('[Exception][_encodeArgumentScreenshot]: '+ str(e))
             return None
 
     # /discover H1
@@ -146,7 +146,8 @@ class Messager(object):
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            logging.debug("[_encodeArgumentDiscover] encodedArgs=", encodedArgs)
             return encodedArgs
-        except:
-            logging.error("[_encodeArgumentScreenshot] An exception occurred")
+        except Exception as e: # work on python 3.x
+            logging.error('[Exception][_encodeArgumentDiscover]: '+ str(e))
             return None
