@@ -73,8 +73,6 @@ class Messager(object):
         encodedCmd = 0
         msgs = request.split(' ')
 
-        logging.debug(request)
-        logging.debug(str(msgs))
         if len(msgs) == 0:
             return None
 
@@ -116,11 +114,14 @@ class Messager(object):
 
         try:
             encodedArgs += (enMarketPair["E_" + args[0]].value << 8)
+            logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
+            logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             encodedArgs += (int(args[2]) << 24)
+            logging.debug("[_encodeArgumentBuy] encodedArgs=", encodedArgs)
             return encodedArgs
         except:
-            print("[_encodeArgumentBuy] An exception occurred")
+            logging.error("[_encodeArgumentBuy] An exception occurred")
             return None
 
     def _encodeArgumentSell(self, args):
@@ -135,7 +136,7 @@ class Messager(object):
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
             return encodedArgs
         except:
-            print("[_encodeArgumentScreenshot] An exception occurred")
+            logging.error("[_encodeArgumentScreenshot] An exception occurred")
             return None
 
     # /discover H1
@@ -147,5 +148,5 @@ class Messager(object):
             encodedArgs += (enTimeframe["E_PERIOD_" + args[1]].value << 16)
             return encodedArgs
         except:
-            print("[_encodeArgumentScreenshot] An exception occurred")
+            logging.error("[_encodeArgumentScreenshot] An exception occurred")
             return None
