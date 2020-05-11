@@ -81,25 +81,25 @@ class Messager(object):
 
         if BYTE0 == "/buy" and me:
             encodedCmd += enTeleCmd.E_TELECMD_BUY.value
-            encodedArgs = _encodeArgumentBuy(msgs)
+            encodedArgs = self._encodeArgumentBuy(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
         elif BYTE0 == "/sell" and me:
             encodedCmd += enTeleCmd.E_TELECMD_BUY.value
-            encodedArgs = _encodeArgumentSell(msgs)
+            encodedArgs = self._encodeArgumentSell(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
         elif BYTE0 == "/screenshot":
             encodedCmd += enTeleCmd.E_TELECMD_BUY.value
-            encodedArgs = _encodeArgumentScreenshot(msgs)
+            encodedArgs = self._encodeArgumentScreenshot(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
         elif BYTE0 == "/discover":
             encodedCmd += enTeleCmd.E_TELECMD_BUY.value
-            encodedArgs = _encodeArgumentDiscover(msgs)
+            encodedArgs = self._encodeArgumentDiscover(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
@@ -122,7 +122,7 @@ class Messager(object):
             return None
 
     def _encodeArgumentSell(self, args):
-        return _encodeArgumentBuy(self, args)
+        return self._encodeArgumentBuy(self, args)
 
     # /screenshot EURUSD M5
     def _encodeArgumentScreenshot(self, args):
