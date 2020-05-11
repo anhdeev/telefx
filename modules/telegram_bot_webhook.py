@@ -35,7 +35,7 @@ class TelegramWebhookBot(object):
 
                     messager = Messager(update)
                     chat_id, result = messager.parse_command()
-
+                    logging.debug("[webhook_handler] chat_id=%s, result=%s", chat_id, result)
                 if chat_id and result:
                     #self.bot.sendMessage(chat_id=chat_id, text=str(result))
                     self.cmd_queue.put(str(result) + "@" + str(chat_id))
