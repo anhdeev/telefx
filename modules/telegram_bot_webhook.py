@@ -62,7 +62,7 @@ class TelegramWebhookBot(object):
 
         @self.https_app.route("/sendcmd", methods=['POST'])
         def send_cmd(self=self):
-            cmd = request.get_data()
+            cmd = request.data
             logging.info("[sendcmd] data: " + cmd)
             self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
             return "ok"
