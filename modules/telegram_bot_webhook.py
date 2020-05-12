@@ -5,6 +5,7 @@ import json
 import logging
 import subprocess
 import queue
+from urllib import parse
 
 #sys.path.append(os.path.abspath(os.path.join('..')))
 
@@ -66,8 +67,18 @@ class TelegramWebhookBot(object):
             logging.info("[sendcmd] data: " + cmd)
             if not cmd:
                 return "fail"
+            
+            mapQueryString = parse.parse_qs(cmd)
+            msgType = mapQueryString['type'][0]
+            msgData = mapQueryString['data'][0]
 
-            self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
+            if msgType == "photo" and msgData:
+                self.bot.
+            elif msgType == "txt" and msgData:
+                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=msgData)
+            else:
+                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
+                
             return "ok"
 
     def send_message(self, chat_id, result):
