@@ -87,19 +87,19 @@ class Messager(object):
                 logging.debug("[_encodeCmd] encodedCmd=%s", hex(encodedCmd))
                 return encodedCmd
         elif BYTE0 == "/sell" and me:
-            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedCmd += enTeleCmd.E_TELECMD_SELL.value
             encodedArgs = self._encodeArgumentSell(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
         elif BYTE0 == "/screenshot":
-            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedCmd += enTeleCmd.E_TELECMD_CAPTURE.value
             encodedArgs = self._encodeArgumentScreenshot(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
                 return encodedCmd
         elif BYTE0 == "/discover":
-            encodedCmd += enTeleCmd.E_TELECMD_BUY.value
+            encodedCmd += enTeleCmd.E_TELECMD_GENERAL_DISCOVER.value
             encodedArgs = self._encodeArgumentDiscover(msgs)
             if(encodedArgs):
                 encodedCmd += encodedArgs
