@@ -73,7 +73,7 @@ class TelegramWebhookBot(object):
             msgData = mapQueryString['data'][0]
 
             if msgType == "photo" and msgData:
-                self.bot.
+                self.bot.send_photo(chat_id=MY_CHAT_ID, photo=open(msgData, 'rb'))
             elif msgType == "txt" and msgData:
                 self.bot.sendMessage(chat_id=MY_CHAT_ID, text=msgData)
             else:
