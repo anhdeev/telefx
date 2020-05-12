@@ -64,6 +64,9 @@ class TelegramWebhookBot(object):
         def send_cmd(self=self):
             cmd = request.data.decode('utf-8')
             logging.info("[sendcmd] data: " + cmd)
+            if not cmd:
+                return "fail"
+
             self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
             return "ok"
 
