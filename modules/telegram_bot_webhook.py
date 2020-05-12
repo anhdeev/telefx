@@ -8,7 +8,7 @@ import queue
 
 #sys.path.append(os.path.abspath(os.path.join('..')))
 
-from modules.messager import Messager
+from modules.messager import Messager, MY_CHAT_ID
 
 #TODO Store key in database
 MY_TELEGRAM_KEY="1102340901:AAFwABs_KFtsth_BVRjOXjEMWxQMOawpFQc"
@@ -63,7 +63,7 @@ class TelegramWebhookBot(object):
         @self.https_app.route("/sendcmd", methods=['POST'])
         def send_cmd(self=self):
             cmd = request.data
-            logging.info("[sendcmd] data: " + cmd)
+            logging.info("[sendcmd] data: " + cmd.decode('utf-8'))
             self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
             return "ok"
 
