@@ -13,4 +13,5 @@ def run_bot():
     bot.run()
 
 if __name__ == "__main__":
+    print(os.getenv("FLASK_ENV"))
     run_bot()

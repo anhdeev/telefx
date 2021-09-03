@@ -1,4 +1,4 @@
-import telegram
+from telegram import Update, Bot
 import os, sys
 from flask import Flask, request, render_template
 import json
@@ -11,20 +11,17 @@ from urllib import parse
 
 from modules.messager import Messager, MY_CHAT_ID
 
-#TODO Store key in database
-MY_TELEGRAM_KEY="1102340901:AAFwABs_KFtsth_BVRjOXjEMWxQMOawpFQc"
-
 class TelegramWebhookBot(object):
     def __init__(self):
-        self.key = MY_TELEGRAM_KEY
-        self.bot = telegram.Bot(token=self.key)
+        self.key = os.getenv('TELEGRAM_KEY')
+        self.host = os.getenv('HOST')
+        self.bot = Bot(token=self.key)
         self.https_app = Flask(__name__, template_folder='../templates')
         self.cmd_queue = queue.Queue(maxsize=20)
 
         @self.https_app.route('/')
-        def index(): #TODO fix issue of register by template
-            logging.info('Registered webhok succesfully')
-            return render_template('upload_cert.html')
+        def index():
+            return render_template('upload_cert.html', host=self.host, botKey=self.key)
 
         @self.https_app.route('/webhook', methods=['POST'])
         def webhook_handler(self=self):
@@ -32,54 +29,53 @@ class TelegramWebhookBot(object):
                 logging.info("Method: %s" % request.method)
                 if request.method == "POST":
                     # retrieve the message in JSON and then transform it to Telegram object
-                    update = telegram.Update.de_json(request.get_json(force=True), self.bot)
+                    update = Update.de_json(request.get_json(force=True), self.bot)
 
                     messager = Messager(update)
-                    chat_id, result = messager.parse_command()
-                if chat_id and result:
-                    logging.debug("[webhook_handler] chat_id=%s, result=%s", chat_id, hex(result))
-                    self.cmd_queue.put(str(result) + "@" + str(chat_id))
-                elif chat_id:
-                    self.send_message(chat_id, "Command is not recognized.")
+                    parsedMsg = messager.parse_command()
+
+                    if parsedMsg["is_valid"]:
+                        logging.debug("[webhook_handler] parsedMsg ", parsedMsg)
+                        self.cmd_queue.put(parsedMsg)
+                    else:
+                        logging.error("[Error] Request message wrong format")
+                        self.bot.sendMessage(chat_id=parsedMsg["chat_id"], text=parsedMsg["err_msg"])
                 else:
-                    logging.error("[Error] Request message wrong format")
+                    logging.error("[Error] Request method=", request.method)
             except Exception as e: # work on python 3.x
                 logging.error('[Exception][webhook_handler]: '+ str(e))
+                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=str(e))
 
             return 'ok'
 
-        @self.https_app.route("/getcmd", methods=['GET'])
-        def get_cmd(self=self):
-            cmd = None
+        @self.https_app.route("/getMessage", methods=['GET'])
+        def get_msg(self=self):
+            msg = None
             try:
                 if self.cmd_queue.empty():
-                    cmd = 'none'
+                    msg = 'none'
                 else:
-                    cmd = self.cmd_queue.get(False)
+                    msg = self.cmd_queue.get(False)
             except:
-                cmd = "none"
+                msg = "none"
 
-            return cmd
+            return msg
 
-        @self.https_app.route("/sendcmd", methods=['POST'])
-        def send_cmd(self=self):
-            cmd = request.data.decode('utf-8')
-            logging.info("[sendcmd] data: " + cmd)
-            if not cmd:
-                return "fail"
-            
-            mapQueryString = parse.parse_qs(cmd)
-            msgType = mapQueryString['type'][0]
-            msgData = mapQueryString['data'][0]
+        @self.https_app.route("/sendMessage", methods=['POST'])
+        def send_msg(self=self):
+            msg = request.data.decode('utf-8')
+            logging.info("[sendcmd] data: ", msg)
+            if not msg:
+                return False
 
-            if msgType == "photo" and msgData:
-                self.bot.send_photo(chat_id=MY_CHAT_ID, photo=open(msgData, 'rb'))
-            elif msgType == "txt" and msgData:
-                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=msgData)
+            if msg["msgType"] == "photo":
+                self.bot.send_photo(chat_id=MY_CHAT_ID, photo=open(msg["photo_uri"], 'rb'))
+            elif msg["msgType"] == "txt":
+                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=msg["message"])
             else:
-                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=cmd)
+                return False
                 
-            return "ok"
+            return True
 
     def send_message(self, chat_id, result):
         self.bot.sendMessage(chat_id=chat_id, text=result)

@@ -1,12 +1,12 @@
 <html>
 <body>
 
-<form action="https://api.telegram.org/bot1102340901:AAGV-PBEyXwfLeAgDkkJvQpI6mD4OGWStXM/setwebhook" method="post" enctype="multipart/form-data">
+<form action="https://api.telegram.org/bot{{botKey}}/setwebhook" method="post" enctype="multipart/form-data">
     <h1><b>Register apphost to Telegram Bot Webhook:</b><h1> <br>
     <h3><b>Certificate: </b></h3>
     <input type="file" name="certificate" id="fileToUpload"/><br>
     <h3><b>URL: </b></h3>
-    <input type="text" name="url"  value="https://35.247.188.19:443/webhook"/><br>
+    <input type="text" name="url"  value="https://{{host}}/webhook"/><br>
     <h3><b>Allowed Updates: </b></h3>
     <input type="text" name="allowed_updates[]" value="message"/><br><br>
     <input type="submit" value="Upload Certificate" name="submit" style="height:20px;width:160px">
