@@ -1,3 +1,4 @@
+from modules.common import enMarketPair, enTimeframe
 from telegram import Update, Bot
 import os, sys
 from flask import Flask, request, render_template
@@ -17,7 +18,7 @@ class TelegramWebhookBot(object):
         self.host = os.getenv('HOST')
         self.bot = Bot(token=self.key)
         self.https_app = Flask(__name__, template_folder='../templates')
-        self.cmd_queue = queue.Queue(maxsize=20)
+        self.cmd_queue = {}
 
         @self.https_app.route('/')
         def index():
@@ -33,10 +34,14 @@ class TelegramWebhookBot(object):
 
                     messager = Messager(update)
                     parsedMsg = messager.parse_command()
-
+                    if(not parsedMsg):
+                        return 'ok'
+                        
                     if parsedMsg["is_valid"]:
                         logging.debug("[webhook_handler] parsedMsg ", parsedMsg)
-                        self.cmd_queue.put(parsedMsg)
+                        self.cmd_queue[parsedMsg["pair"]] = parsedMsg
+                        response = parsedMsg["pair"][2:] + "-" + parsedMsg["timeframe"][9:] + " accepted."
+                        self.bot.sendMessage(chat_id=parsedMsg["chat_id"], text=response)
                     else:
                         logging.error("[Error] Request message wrong format")
                         self.bot.sendMessage(chat_id=parsedMsg["chat_id"], text=parsedMsg["err_msg"])
@@ -44,38 +49,40 @@ class TelegramWebhookBot(object):
                     logging.error("[Error] Request method=", request.method)
             except Exception as e: # work on python 3.x
                 logging.error('[Exception][webhook_handler]: '+ str(e))
-                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=str(e))
+                self.bot.sendMessage(chat_id=MY_CHAT_ID, text="Error:" + str(e))
 
             return 'ok'
 
         @self.https_app.route("/getMessage", methods=['GET'])
         def get_msg(self=self):
-            msg = None
-            try:
-                if self.cmd_queue.empty():
-                    msg = 'none'
-                else:
-                    msg = self.cmd_queue.get(False)
-            except:
-                msg = "none"
-
-            return msg
+            pair = request.args.get('pair')
+            if(not pair):
+                return 'none'
+            msg = self.cmd_queue.get(pair)
+            if(msg):
+                self.cmd_queue[pair] = None
+                return msg
+            else:
+                return 'none'
 
         @self.https_app.route("/sendMessage", methods=['POST'])
         def send_msg(self=self):
-            msg = request.data.decode('utf-8')
-            logging.info("[sendcmd] data: ", msg)
-            if not msg:
-                return False
+            body = request.json
+            logging.info("[sendcmd] data: ", body)
+            if not body:
+                return 'none'
 
-            if msg["msgType"] == "photo":
-                self.bot.send_photo(chat_id=MY_CHAT_ID, photo=open(msg["photo_uri"], 'rb'))
-            elif msg["msgType"] == "txt":
-                self.bot.sendMessage(chat_id=MY_CHAT_ID, text=msg["message"])
+            chat_id = body.get("chat_id")
+            if body["msgType"] == "photo":
+                self.bot.send_photo(chat_id=chat_id, photo=open(body["photo_uri"], 'rb'))
+            elif body["msgType"] == "txt":
+                self.bot.sendMessage(chat_id=chat_id, text=body["message"])
+            elif body["msgType"] == "object":
+                self.bot.sendMessage(chat_id=chat_id, text=json.dumps(body))
             else:
-                return False
+                return 'none'
                 
-            return True
+            return 'ok'
 
     def send_message(self, chat_id, result):
         self.bot.sendMessage(chat_id=chat_id, text=result)

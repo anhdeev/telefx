@@ -4,6 +4,7 @@ import json
 import logging
 
 from modules.common import *
+from modules.cmd_parser import *
 
 MY_USER_NAME="Duong Anh"
 MY_USER_ID="378106375"
@@ -45,9 +46,17 @@ class Messager(object):
     def parse_command(self):
         if self.text == None or self.text == "" or self.text[:1] != '/':
             return dict()
+
+        parser = CmdParser(self.text)
+        if(not parser.getCmd()):
+            return None
+
         parsedMsg = {
-            "text": self.text,
-            "from_user": self.from_user,
+            "cmd": parser.getCmd(),
+            "args": parser.getArgs(),
+            "pair": parser.currentPair,
+            "timeframe": parser.currentTimeFrame,
+            #"from_user": self.from_user,
             "msg_type": self.msg_type,
             "msg_id": self.msg_id,
             "chat_id": self.chat_id,
