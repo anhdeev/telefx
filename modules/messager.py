@@ -53,14 +53,19 @@ class Messager(object):
 
         parsedMsg = {
             "cmd": parser.getCmd(),
-            "args": parser.getArgs(),
+            "body": {
+                "mandatory": parser.getArgs(),
+                "optional": parser.getOptionalArgs()
+            },
             "pair": parser.currentPair,
-            "timeframe": parser.currentTimeFrame,
-            #"from_user": self.from_user,
-            "msg_type": self.msg_type,
-            "msg_id": self.msg_id,
-            "chat_id": self.chat_id,
-            "from_id": self.from_id,
+            "frame": parser.currentTimeFrame,
+            "from": {
+                #"from_user": self.from_user,
+                "msg_type": self.msg_type,
+                "msg_id": self.msg_id,
+                "chat_id": self.chat_id,
+                "from_id": self.from_id
+            },
             "role": "normal",
             "is_valid": True,
             "err_msg": ""

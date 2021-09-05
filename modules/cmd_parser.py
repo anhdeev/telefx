@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+from typing import Dict
 
 from modules.common import *
 
@@ -26,4 +27,19 @@ class CmdParser(object):
         if(self.length == 0):
             return None
 
-        return self.parsedMsg[1:self.length-1]
+        mandatory = [ele for ele in self.parsedMsg[1:self.length-1] if '=' not in ele]
+
+        return mandatory
+
+    def getOptionalArgs(self):
+        if(self.length == 0):
+            return None
+
+        optionals = [ele for ele in self.parsedMsg[1:self.length-1] if '=' in ele]
+        parsedOptionals = dict()
+        for o in optionals:
+            a = o.split('=')
+            if(len(a) !=2):
+                continue
+            parsedOptionals[a[0]] = a[1]
+        return parsedOptionals

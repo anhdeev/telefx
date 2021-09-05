@@ -40,7 +40,7 @@ class TelegramWebhookBot(object):
                     if parsedMsg["is_valid"]:
                         logging.debug("[webhook_handler] parsedMsg ", parsedMsg)
                         self.cmd_queue[parsedMsg["pair"]] = parsedMsg
-                        response = parsedMsg["pair"][2:] + "-" + parsedMsg["timeframe"][9:] + " accepted."
+                        response = parsedMsg["pair"][2:] + "-" + parsedMsg["frame"][9:] + " accepted."
                         self.bot.sendMessage(chat_id=parsedMsg["chat_id"], text=response)
                     else:
                         logging.error("[Error] Request message wrong format")
