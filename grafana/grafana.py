@@ -10,5 +10,6 @@ def run():
 
     for agent in AGENTS:
         print("+ Agent to collect mem usage from:", agent)
-        collector.start_interval(agent, 10)
+        collector.start_interval(agent, 15)
+        collector.start_interval(agent + "_without_middleware", 5)
         time.sleep(3)

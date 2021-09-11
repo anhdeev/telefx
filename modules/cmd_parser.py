@@ -27,7 +27,7 @@ class CmdParser(object):
         if(self.length == 0):
             return None
 
-        mandatory = [ele for ele in self.parsedMsg[1:self.length-1] if '=' not in ele]
+        mandatory = [ele for ele in self.parsedMsg[1:self.length] if '=' not in ele]
 
         return mandatory
 
@@ -35,11 +35,13 @@ class CmdParser(object):
         if(self.length == 0):
             return None
 
-        optionals = [ele for ele in self.parsedMsg[1:self.length-1] if '=' in ele]
+        optionals = [ele for ele in self.parsedMsg[1:self.length] if '=' in ele]
         parsedOptionals = dict()
         for o in optionals:
             a = o.split('=')
             if(len(a) !=2):
                 continue
             parsedOptionals[a[0]] = a[1]
+
+        print(parsedOptionals)
         return parsedOptionals

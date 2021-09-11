@@ -16,7 +16,6 @@ class MyPostgres(object):
         try:
             cur = self.conn.cursor()
             cmd = self._build_sql(object)
-            print('PostgreSQL execute:', cmd)
             cur.execute(cmd)
             self.conn.commit()
             cur.close()
@@ -29,10 +28,10 @@ class MyPostgres(object):
         table_name = 'mem_usage'
         columns = list(object.keys())
         values = list(object.values())
+
         sql_string = 'INSERT INTO {} '.format( table_name )
         sql_string += "(" + ', '.join(columns) + ")\nVALUES "
-        sql_string += "(" + ', '.join(values) + ");"
-
+        sql_string += "(" + ', '.join(str(v) for v in values) + ");"
         return sql_string
 
         
