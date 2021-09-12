@@ -33,18 +33,19 @@ class TelegramWebhookBot(object):
                     update = Update.de_json(request.get_json(force=True), self.bot)
 
                     messager = Messager(update)
-                    parsedMsg = messager.parse_command()
+                    parsedMsg, chat_id = messager.parse_command()
                     if(not parsedMsg):
+                        self.bot.sendMessage(chat_id=chat_id, text='ok')
                         return 'ok'
                         
                     if parsedMsg["is_valid"]:
                         logging.debug("[webhook_handler] parsedMsg ", parsedMsg)
                         self.cmd_queue[parsedMsg["pair"][2:]] = parsedMsg
                         response = parsedMsg["pair"][2:] + "-" + parsedMsg["frame"][9:] + " accepted."
-                        self.bot.sendMessage(chat_id=parsedMsg["from"]["chat_id"], text=response)
+                        self.bot.sendMessage(chat_id=chat_id, text=response)
                     else:
                         logging.error("[Error] Request message wrong format")
-                        self.bot.sendMessage(chat_id=parsedMsg["from"]["chat_id"], text=parsedMsg["err_msg"])
+                        self.bot.sendMessage(chat_id=chat_id, text=parsedMsg["err_msg"])
                 else:
                     logging.error("[Error] Request method=", request.method)
             except Exception as e: # work on python 3.x
@@ -81,7 +82,8 @@ class TelegramWebhookBot(object):
             if body["msg_type"] == "photo":
                 self.bot.send_photo(chat_id=chat_id, photo=open(body["photo_uri"], 'rb'))
             elif body["msg_type"] == "txt":
-                composed_message = body["from"] + "> " + body["data"]
+                msg = body["data"] if body["code"] else body["status_message"]
+                composed_message = body["from"] + "> " + msg
                 self.bot.sendMessage(chat_id=chat_id, text=composed_message)
             elif body["msg_type"] == "json":
                 obj = json.loads(body["data"])

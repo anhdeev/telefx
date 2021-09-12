@@ -49,7 +49,7 @@ class Messager(object):
 
         parser = CmdParser(self.text)
         if(not parser.getCmd()):
-            return None
+            return None, self.chat_id
 
         parsedMsg = {
             "cmd": parser.getCmd(),
@@ -58,6 +58,7 @@ class Messager(object):
                 "optional": parser.getOptionalArgs()
             },
             "pair": parser.currentPair,
+            "app": parser.currentApp, # bot <1..*> app via event handler 
             "frame": parser.currentTimeFrame,
             "from": {
                 #"from_user": self.from_user,
@@ -88,4 +89,4 @@ class Messager(object):
             logging.error(err_msg)
             parsedMsg["err_msg"] = err_msg
 
-        return parsedMsg
+        return parsedMsg, self.chat_id
